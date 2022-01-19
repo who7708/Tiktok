@@ -8,10 +8,10 @@ import com.bytedance.tiktok.base.BaseActivity
 import com.bytedance.tiktok.base.CommPagerAdapter
 import com.bytedance.tiktok.bean.MainPageChangeEvent
 import com.bytedance.tiktok.bean.PauseVideoEvent
+import com.bytedance.tiktok.databinding.ActivityMainBinding
 import com.bytedance.tiktok.fragment.MainFragment
 import com.bytedance.tiktok.fragment.PersonalHomeFragment
 import com.bytedance.tiktok.utils.RxBus
-import kotlinx.android.synthetic.main.activity_main.*
 import rx.functions.Action1
 import java.util.*
 
@@ -31,6 +31,9 @@ class MainActivity : BaseActivity() {
 
     /** 连续按返回键退出时间  */
     private val EXIT_TIME = 2000
+
+    private lateinit var _binding: ActivityMainBinding
+
     override fun setLayoutId(): Int {
         return R.layout.activity_main
     }
@@ -39,7 +42,7 @@ class MainActivity : BaseActivity() {
 
         try {
             Thread.sleep(2000)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -47,16 +50,14 @@ class MainActivity : BaseActivity() {
         fragments.add(mainFragment)
         fragments.add(personalHomeFragment)
         pagerAdapter = CommPagerAdapter(supportFragmentManager, fragments, arrayOf("", ""))
-        viewPager!!.adapter = pagerAdapter
+        _binding.viewPager.adapter = pagerAdapter
 
         //点击头像切换页面
         RxBus.getDefault().toObservable(MainPageChangeEvent::class.java)
-                .subscribe(Action1 { event: MainPageChangeEvent ->
-                    if (viewPager != null) {
-                        viewPager!!.currentItem = event.page
-                    }
-                } as Action1<MainPageChangeEvent>)
-        viewPager!!.addOnPageChangeListener(object : OnPageChangeListener {
+            .subscribe(Action1 { event: MainPageChangeEvent ->
+                _binding.viewPager.currentItem = event.page
+            } as Action1<MainPageChangeEvent>)
+        _binding.viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 curMainPage = position
@@ -74,8 +75,8 @@ class MainActivity : BaseActivity() {
     override fun onBackPressed() {
         //双击返回退出App
         if (System.currentTimeMillis() - lastTime > EXIT_TIME) {
-            if (viewPager!!.currentItem == 1) {
-                viewPager!!.currentItem = 0
+            if (_binding.viewPager.currentItem == 1) {
+                _binding.viewPager.currentItem = 0
             } else {
                 Toast.makeText(applicationContext, "再按一次退出", Toast.LENGTH_SHORT).show()
                 lastTime = System.currentTimeMillis()

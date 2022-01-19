@@ -14,12 +14,16 @@ import com.bytedance.tiktok.bean.CurUserBean
 import com.bytedance.tiktok.bean.DataCreate
 import com.bytedance.tiktok.bean.MainPageChangeEvent
 import com.bytedance.tiktok.bean.PauseVideoEvent
+import com.bytedance.tiktok.databinding.FragmentRecommendBinding
 import com.bytedance.tiktok.utils.OnVideoControllerListener
 import com.bytedance.tiktok.utils.RxBus
-import com.bytedance.tiktok.view.*
+import com.bytedance.tiktok.view.CommentDialog
+import com.bytedance.tiktok.view.ControllerView
+import com.bytedance.tiktok.view.FullScreenVideoView
+import com.bytedance.tiktok.view.LikeView
+import com.bytedance.tiktok.view.ShareDialog
 import com.bytedance.tiktok.view.viewpagerlayoutmanager.OnViewPagerListener
 import com.bytedance.tiktok.view.viewpagerlayoutmanager.ViewPagerLayoutManager
-import kotlinx.android.synthetic.main.fragment_recommend.*
 import rx.functions.Action1
 
 /**
@@ -37,34 +41,36 @@ class RecommendFragment : BaseFragment() {
 
     private var ivCurCover: ImageView? = null
 
+    private lateinit var _binding: FragmentRecommendBinding
+
     override fun setLayoutId(): Int {
         return R.layout.fragment_recommend
     }
 
     override fun init() {
         adapter = VideoAdapter(activity, DataCreate.datas)
-        recyclerView!!.adapter = adapter
+        _binding.recyclerView.adapter = adapter
         videoView = FullScreenVideoView(activity)
         setViewPagerLayoutManager()
         setRefreshEvent()
 
         //监听播放或暂停事件
         val subscribe = RxBus.getDefault().toObservable(PauseVideoEvent::class.java)
-                .subscribe(Action1 { event: PauseVideoEvent ->
-                    if (event.isPlayOrPause) {
-                        videoView!!.start()
-                    } else {
-                        videoView!!.pause()
-                    }
-                } as Action1<PauseVideoEvent>)
-//        subscribe.unsubscribe()
+            .subscribe(Action1 { event: PauseVideoEvent ->
+                if (event.isPlayOrPause) {
+                    videoView!!.start()
+                } else {
+                    videoView!!.pause()
+                }
+            } as Action1<PauseVideoEvent>)
+        //        subscribe.unsubscribe()
     }
 
     override fun onResume() {
         super.onResume()
 
         //返回时，推荐页面可见，则继续播放视频
-        if (MainActivity.curMainPage == 0 && MainFragment.Companion.curPage == 1) {
+        if (MainActivity.curMainPage == 0 && MainFragment.curPage == 1) {
             videoView!!.start()
         }
     }
@@ -81,8 +87,8 @@ class RecommendFragment : BaseFragment() {
 
     private fun setViewPagerLayoutManager() {
         viewPagerLayoutManager = ViewPagerLayoutManager(activity)
-        recyclerView!!.layoutManager = viewPagerLayoutManager
-        recyclerView!!.scrollToPosition(PlayListActivity.initPos)
+        _binding.recyclerView.layoutManager = viewPagerLayoutManager
+        _binding.recyclerView.scrollToPosition(PlayListActivity.initPos)
         viewPagerLayoutManager!!.setOnViewPagerListener(object : OnViewPagerListener {
             override fun onInitComplete() {
                 playCurVideo(PlayListActivity.initPos)
@@ -101,18 +107,19 @@ class RecommendFragment : BaseFragment() {
     }
 
     private fun setRefreshEvent() {
-        refreshLayout!!.setColorSchemeResources(R.color.color_link)
-        refreshLayout!!.setOnRefreshListener {
+        _binding.refreshLayout.setColorSchemeResources(R.color.color_link)
+        _binding.refreshLayout.setOnRefreshListener {
             object : CountDownTimer(1000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
-                    refreshLayout!!.isRefreshing = false
+                    _binding.refreshLayout.isRefreshing = false
                 }
             }.start()
         }
     }
 
     private fun playCurVideo(position: Int) {
+        1
         if (position == curPlayPos) {
             return
         }
@@ -125,7 +132,7 @@ class RecommendFragment : BaseFragment() {
         ivPlay.alpha = 0.4f
 
         //播放暂停事件
-        likeView.setOnPlayPauseListener(object: LikeView.OnPlayPauseListener {
+        likeView.setOnPlayPauseListener(object : LikeView.OnPlayPauseListener {
             override fun onPlayOrPause() {
                 if (videoView!!.isPlaying) {
                     videoView!!.pause()

@@ -6,8 +6,8 @@ import com.bytedance.tiktok.R
 import com.bytedance.tiktok.base.BaseFragment
 import com.bytedance.tiktok.base.CommPagerAdapter
 import com.bytedance.tiktok.bean.PauseVideoEvent
+import com.bytedance.tiktok.databinding.FragmentMainBinding
 import com.bytedance.tiktok.utils.RxBus
-import kotlinx.android.synthetic.main.fragment_main.*
 import java.util.*
 
 /**
@@ -21,6 +21,8 @@ class MainFragment : BaseFragment() {
 
     private val fragments = ArrayList<Fragment>()
     private var pagerAdapter: CommPagerAdapter? = null
+
+    private lateinit var _binding: FragmentMainBinding
 
     override fun setLayoutId(): Int {
         return R.layout.fragment_main
@@ -36,13 +38,13 @@ class MainFragment : BaseFragment() {
         recommendFragment = RecommendFragment()
         fragments.add(currentLocationFragment!!)
         fragments.add(recommendFragment!!)
-        tabTitle!!.addTab(tabTitle!!.newTab().setText("海淀"))
-        tabTitle!!.addTab(tabTitle!!.newTab().setText("推荐"))
+        _binding.tabTitle.addTab(_binding.tabTitle.newTab().setText("海淀"))
+        _binding.tabTitle.addTab(_binding.tabTitle.newTab().setText("推荐"))
         pagerAdapter = CommPagerAdapter(childFragmentManager, fragments, arrayOf("海淀", "推荐"))
-        viewPager!!.adapter = pagerAdapter
-        tabTitle!!.setupWithViewPager(viewPager)
-        tabTitle!!.getTabAt(1)!!.select()
-        viewPager!!.addOnPageChangeListener(object : OnPageChangeListener {
+        _binding.viewPager.adapter = pagerAdapter
+        _binding.tabTitle.setupWithViewPager(_binding.viewPager)
+        _binding.tabTitle.getTabAt(1)!!.select()
+        _binding.viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 curPage = position
@@ -60,11 +62,11 @@ class MainFragment : BaseFragment() {
     }
 
     private fun setMainMenu() {
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("首页"))
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("好友"))
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText(""))
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("消息"))
-        tabMainMenu!!.addTab(tabMainMenu!!.newTab().setText("我"))
+        _binding.tabMainMenu.addTab(_binding.tabMainMenu.newTab().setText("首页"))
+        _binding.tabMainMenu.addTab(_binding.tabMainMenu.newTab().setText("好友"))
+        _binding.tabMainMenu.addTab(_binding.tabMainMenu.newTab().setText(""))
+        _binding.tabMainMenu.addTab(_binding.tabMainMenu.newTab().setText("消息"))
+        _binding.tabMainMenu.addTab(_binding.tabMainMenu.newTab().setText("我"))
     }
 
     companion object {

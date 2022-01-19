@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+// remote kotlin-android-extensions convert to viewBinding
+// apply plugin: 'kotlin-android-extensions'
+// apply plugin: 'kotlin-kapt'
 apply plugin: 'com.didi.dokit'
 
 android {
@@ -20,9 +22,14 @@ android {
         }
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
     }
+
+    // dataBinding {
+    //     enabled = true
+    // }
 
     //支持lambda语法
     compileOptions {

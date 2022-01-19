@@ -10,7 +10,7 @@ import com.bytedance.tiktok.adapter.PrivateLetterAdapter
 import com.bytedance.tiktok.adapter.ShareAdapter
 import com.bytedance.tiktok.bean.DataCreate
 import com.bytedance.tiktok.bean.ShareBean
-import kotlinx.android.synthetic.main.dialog_share.*
+import com.bytedance.tiktok.databinding.DialogShareBinding
 import java.util.*
 
 /**
@@ -18,14 +18,16 @@ import java.util.*
  * create on 2020-05-25
  * description 分享弹框
  */
-class ShareDialog : BaseBottomSheetDialog() {
+open class ShareDialog : BaseBottomSheetDialog() {
 
     private var privateLetterAdapter: PrivateLetterAdapter? = null
     private var shareAdapter: ShareAdapter? = null
     private val shareBeans = ArrayList<ShareBean>()
 
+    private lateinit var _binding: DialogShareBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.dialog_share, container)
+        val view = inflater.inflate(R.layout.dialog_share, container)
         return view
     }
 
@@ -35,12 +37,12 @@ class ShareDialog : BaseBottomSheetDialog() {
     }
 
     private fun init() {
-        rvPrivateLetter!!.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        _binding.rvPrivateLetter.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         privateLetterAdapter = PrivateLetterAdapter(context, DataCreate.userList)
-        rvPrivateLetter!!.adapter = privateLetterAdapter
-        rvShare!!.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        _binding.rvPrivateLetter.adapter = privateLetterAdapter
+        _binding.rvShare.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         shareAdapter = ShareAdapter(context, shareBeans)
-        rvShare!!.adapter = shareAdapter
+        _binding.rvShare.adapter = shareAdapter
         setShareDatas()
     }
 
@@ -54,6 +56,6 @@ class ShareDialog : BaseBottomSheetDialog() {
         shareAdapter!!.notifyDataSetChanged()
     }
 
-    protected override val height: Int
-        protected get() = dp2px(context!!, 355f)
+    override val height: Int
+        get() = dp2px(context!!, 355f)
 }
